@@ -1,0 +1,48 @@
+body {
+	font-family: 'Raleway', sans-serif, 'helvetica-light';
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+a:hover {
+	color: rgb(57, 177, 95);
+}
+
+#header {
+	border-bottom: 1px solid rgb(83, 82, 82);
+	width: 98%;
+	margin-right: 10px;
+	padding-left: 10px;
+	padding-top: 10px;
+	min-width: 800px;
+	overflow: hidden;
+}
+
+#header ul li {
+	text-decoration: none;
+	list-style-type: none;
+	float: left;
+	padding-right: 100px;
+	color: black;
+}
+
+#header ul {
+	margin-top: 0;
+	float: right;
+}
+
+#header div {
+	float: left;
+}
+
+#content {
+	padding-left: 50px;
+}
+
+#title {
+	font-size: 40px;
+	display: block;
+}

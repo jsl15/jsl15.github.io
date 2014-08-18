@@ -1,0 +1,46 @@
+body {
+	background-color: rgb(249, 250, 248);
+}
+
+#photo {
+	background-image: url('img/new.jpg');
+	width: 1000px;
+	height: 1000px;
+	text-align: right;
+	margin: auto;
+	margin-top: 50px;
+	position: relative;
+	background-size: 100%;
+	top: 50%;
+}
+
+#photo ul {
+	padding-top: 233px;
+	padding-right: 155px;
+	font-family: 'Raleway', sans-serif;
+	font-weight: 300;
+	list-style-type: none;
+}
+
+#photo ul li {
+	font-size: 24px;
+	padding-top: 10px;
+	text-shadow: 0px 1px rgb(18, 18, 18);
+}
+
+#photo ul li div {
+	padding-right: 6px;
+}
+
+#photo ul li div:hover {
+	border-right: 3px solid rgb(162, 240, 172);
+}
+
+a:hover {
+	color: rgb(162, 240, 172);
+}
+
+a {
+	text-decoration:none;
+	color:white;
+}
