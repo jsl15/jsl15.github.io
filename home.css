@@ -30,6 +30,7 @@ body {
 
 #photo ul li div {
 	padding-right: 6px;
+	display: inline-block;
 }
 
 #photo ul li div:hover {
