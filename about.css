@@ -76,12 +76,22 @@ a:hover {
 #content {
 	padding-left: 50px;
 	font-family: 'Open Sans', sans-serif;
+	min-width: 1000px;
 }
 
-#content a {
-	
+#text {
+	float: left;
+	width: 40%;
+}
+
+#picture {
+	float: right;
+	display: inline-block;
+	margin-top: 50px;
+}
 
 #title {
+	clear: both;
 	font-family: 'Raleway', sans-serif, 'helvetica-light';
 	font-size: 40px;
 	display: block;
