@@ -4,8 +4,8 @@ body {
 
 #photo {
 	background-image: url('img/new.jpg');
-	width: 1000px;
-	height: 1000px;
+	width: 700px;
+	height: 700px;
 	text-align: right;
 	margin: auto;
 	margin-top: 50px;
@@ -15,16 +15,16 @@ body {
 }
 
 #photo ul {
-	padding-top: 233px;
-	padding-right: 155px;
+	padding-top: 162px;
+	padding-right: 108px;
 	font-family: 'Raleway', sans-serif;
 	font-weight: 300;
 	list-style-type: none;
 }
 
 #photo ul li {
-	font-size: 24px;
-	padding-top: 10px;
+	font-size: 20px;
+	padding-top: 4px;
 	text-shadow: 0px 1px rgb(18, 18, 18);
 }
 

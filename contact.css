@@ -11,6 +11,15 @@ a:hover {
 	color: rgb(57, 177, 95);
 }
 
+li {
+	text-decoration: none;
+	list-style-type: none;
+}
+
+ul {
+	padding: 0;
+}
+
 #header {
 	border-bottom: 1px solid rgb(83, 82, 82);
 	width: 98%;
@@ -35,6 +44,7 @@ a:hover {
 
 #header div {
 	float: left;
+	height: 100%;
 }
 
 #content {
@@ -78,30 +88,14 @@ a:hover {
 	padding-left: 50px;
 	font-family: 'Open Sans', sans-serif;
 	min-width: 1000px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
-#text {
-	float: left;
-	width: 40%;
+#content ul li {
+	font-size: 20px;
+	padding-top: 5px;
 }
 
-#picture {
-	position: absolute;
-	padding-left: 50px;
-	padding-top: 50px;
-	display: inline-block;
-	margin-top: 50px;
-	left: 50%;
-}
 
-#picture img {
-	width: 400px;
-}
 
-#title {
-	clear: both;
-	font-family: 'Raleway', sans-serif, 'helvetica-light';
-	font-size: 40px;
-	display: block;
-}
+
