@@ -96,6 +96,11 @@ ul {
 	padding-top: 5px;
 }
 
-
+#title {
+	clear: both;
+	font-family: 'Raleway', sans-serif, 'helvetica-light';
+	font-size: 40px;
+	display: block;
+}
 
 
