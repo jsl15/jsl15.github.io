@@ -4,7 +4,7 @@ body {
 
 #photo {
 	background-image: url('img/hello.jpg');
-	background-color: gray;
+	background-color: rgb(208, 208, 208);
 	width: 700px;
 	height: 700px;
 	text-align: right;
