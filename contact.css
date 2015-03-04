@@ -73,7 +73,6 @@ ul {
 	padding-right: 100px;
 
 	color: black;
-	width: 40%;
 }
 
 #header ul {
@@ -96,6 +95,7 @@ ul {
 #content ul li {
 	font-size: 20px;
 	padding-top: 5px;
+	width: 40%
 }
 
 #title {
