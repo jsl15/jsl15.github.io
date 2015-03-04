@@ -71,7 +71,9 @@ ul {
 	list-style-type: none;
 	float: left;
 	padding-right: 100px;
+
 	color: black;
+	width: 40%;
 }
 
 #header ul {
