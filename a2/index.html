@@ -3,7 +3,8 @@
 <style>
 
 body {
-  font: 10px sans-serif;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue","Lucida Grande", sans-serif; 
+    font-weight: 100
 }
 
 .axis path,
@@ -35,7 +36,6 @@ body {
 }
 .d3-tip {
   line-height: 1;
-  font-weight: bold;
   padding: 12px;
   background: rgba(0, 0, 0, 0.8);
   color:#DCDCDC;
@@ -73,8 +73,8 @@ body {
 var personalDataNone = "Sleep"
 var personalData = personalDataNone
 
-var margin = {top: 20, right: 100, bottom: 30, left: 40},
-    width = 850 - margin.left - margin.right,
+var margin = {top: 20, right: 300, bottom: 30, left: 60},
+    width = 1000 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom,
     legendWidth = 180;
 
@@ -197,7 +197,8 @@ d3.csv("personal.csv", function(error, data) {
     .data(fields)
     .enter().append('option')
     .attr("value", function(d) {return d.toString();})
-    .text(function(d) { return d});
+    .text(function(d) { return d})
+    .property("selected", function(d){ return d === personalDataNone; });
 
  data.forEach(function(d) {
     var y0 = 0;
