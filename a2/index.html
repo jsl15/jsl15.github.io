@@ -272,7 +272,9 @@ var hour = svg.selectAll(".hour")
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.y1); })
       .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-      .style("fill", function(d) { return color(d.name); });
+      .style("fill", function(d) { return color(d.name); })
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
   reloadPersonalData();
   var legend = svg.selectAll(".legend").remove()
   legend = svg.selectAll(".legend")
