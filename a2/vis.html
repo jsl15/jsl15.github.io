@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>D3 Starter</title>
+<style>
+</style>
+</head>
+
+<body>
+<script type="text/javascript" src="//cdn.jsdelivr.net/d3js/latest/d3.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css" />
+<div id="chart1"></div>
+<div id="chart2"></div>
+
+<script>
+var width = 400;
+var height = 155;
+var svg = d3.selectAll('#chart1').append('svg')
+    .attr('width', width)
+    .attr('height', height);
+
+var xPadding = 3;
+var yPadding = 60;
+var barWidth = 5;
+var barMax = 150;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, barMax], .1);
+
+var y = d3.scale.linear()
+    .rangeRound([height, 0])
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .tickFormat(d3.format(".2s"))
+    
+var activities = Array.apply(null, Array(18)).map(function (_, i) {return i+1;});
+
+var color  = d3.scale.ordinal()
+    .range(['#9e0142','#d53e4f','#f46d43','#fdae61','#fee08b','#ffffbf','#e6f598','#abdda4','#66c2a5','#3288bd','#5e4fa2', '#8a89a6', '#7b6888', '#98abc5', '#ff8c00', '#20A2AF', '#5E218C', '#D6A724']);
+
+d3.csv('minutesFile.csv')
+    .row(function(d) {return { hour: +d.hour, activity: +d.activity, minutes: +d.minutes}})
+    .get(
+        function(error, data) {
+            color.domain(activities);
+
+            data.forEach(
+            function (d) {
+               var y0 = 0;
+               d.labels = color.domain().map(
+                function (activity) { return {activity: activity, y0: y0, y1: y0 += +d['minutes']};}
+               );
+            });
+
+            x.domain([0, 24])
+            y.domain([0, 100])
+
+            var hourBlock = svg.selectAll(".hourBlock")
+                .data(data)
+                .enter().append("g")
+                    .attr("class", "g");
+
+            hourBlock.selectAll("rect")
+                .data(function (d) {return d.labels;})
+                .enter()
+                .append("rect")
+                .attr("width", x.rangeBand())
+                .attr("y", function (d) {return y(d.y1);})
+                .attr("height", function (d) {return y(d.y0) - y(d.y1);})
+                .style("fill", function(d) {return color(d.hour);});
+    });
+
+
+</script>
+</body>
+</html>

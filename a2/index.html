@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+}
+
+.personal {
+  pointer-events: none;
+}
+
+.average rect {
+  pointer-events:fill;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.legend line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color:#DCDCDC;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
+<body>
+<h2>Distribution of time spent by hour</h2>
+<div id="chart"></div>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+<script>
+
+var personalDataNone = "Sleep"
+var personalData = personalDataNone
+
+var margin = {top: 20, right: 100, bottom: 30, left: 40},
+    width = 850 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom,
+    legendWidth = 180;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .rangeRound([height, 0]);
+
+var color = d3.scale.ordinal()
+    .range(['#9e0142','#d53e4f','#f46d43','#fdae61','#fee08b','#FBF455','#ffffbf','#e6f598', '#abdda4','#66C26C','#66c2a5','#85CFF9','#3B71FF','#925DFF','#5A00C1','#9C119A','#EF8FE0', '#F7D7F1']);
+
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .tickFormat(d3.format(".0%"));
+
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong>" + d.name +":</strong> <span style='color:white'>" + Math.floor((d.y0 - d.y1)*-100.0) + "%</span>";
+  })
+
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right + legendWidth)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+svg.call(tip);
+
+var activityOrder = []
+
+d3.csv("minutesFile.csv", function(error, data) {
+  if (error) throw error;
+  if (activityOrder.length == 0) {
+     activityOrder = d3.keys(data[0]).filter(function(key) { return key !== "hour"; });
+  }
+  color.domain(activityOrder);
+
+  data.forEach(function(d) {
+    var y0 = 0;
+    d.activities = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+    d.activities.forEach(function(d) { d.y0 /= y0; d.y1 /= y0; });
+  });
+  data.sort(function(a, b) { return a.hour - b.hour; });
+
+  x.domain(data.map(function(d) { return d.hour; }));
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+  var hour = svg.selectAll(".hour")
+      .data(data)
+    .enter().append("g")
+      .attr("class", "hour")
+      .attr("transform", function(d) { return "translate(" + x(d.hour) + ",0)"; });
+
+  hour.selectAll(".average")
+      .data(function(d) { return d.activities; })
+    .enter().append("rect")
+      .attr("class", "average") 
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.y1); })
+      .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+      .style("fill", function(d) { return color(d.name); })
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
+
+     var legend = svg.selectAll(".legend")
+          .data(color.domain().slice().reverse())
+          .enter().append("g")
+          .attr("class", "legend")
+          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+      .attr("x", width + legendWidth - 170)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color)
+      .on("click", function (d, i) {
+           activityOrder.splice(activityOrder.length - i-1, 1);
+           activityOrder.splice(0, 0, d);
+           color.domain(activityOrder);
+           reloadChart(data)
+      });
+
+    legend.append("text")
+    .attr("x", width + legendWidth - 150)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .text(function(d) { return d; });
+
+});
+
+d3.csv("personal.csv", function(error, data) {
+ var fields= d3.keys(data[0]).filter(function(key) { return key !== "hour"; });
+ d3.select("#chart").append("span").text("Personal Data to Display:")
+ d3.select("#chart").append("select").attr("id", "selector");
+ var selector = d3.select("#selector")
+    .on("change", function () {
+        var newData = d3.select(this).property('value');
+        personalData = newData
+        reloadPersonalData()
+     });
+ 
+ selector.selectAll("option")
+    .data(fields)
+    .enter().append('option')
+    .attr("value", function(d) {return d.toString();})
+    .text(function(d) { return d});
+
+ data.forEach(function(d) {
+    var y0 = 0;
+    var a= d3.keys(data[0]).filter(function(key) { return key !== "hour"; });
+    var m = {}
+    var activities =  a.map(function(name) {
+        if (isNaN(+d[name])) {
+            return {name: name, y0:y0, y1:0}
+        }
+        y0 += +d[name]
+        return {name: name, y0: y0, y:+d[name]}; 
+    });
+    activities.forEach(function(n) {n.hour = d.hour ;n.y /= y0; m[n.name] = n;});
+    d.personal = m
+  });
+ var personal = svg.selectAll(".personal")
+    .data(data.map(function(d) {return  d.personal}))
+    .enter().append("rect")
+    .attr("class", "personal")
+    .attr("transform", function(d) {return "translate(" + x(d[personalData].hour) + ",0)"; })
+    .attr("width", x.rangeBand())
+    .attr("y", function(d) {return y(d[personalData].y); })
+    .attr("height", function(d, i) { return y(0) - y(d[personalData].y); })
+    .style("fill", "black")
+    .style("fill-opacity", .5)
+    .style("stroke", "black")
+    .style("stroke-width", 1.5);
+
+});
+ d3.select("#chart").append("div")
+    .text("Hour of the day")
+    .style("width", width - margin.left - margin.right)
+    .style("padding", "none")
+    .style("text-align", "center");
+
+function reloadPersonalData() {
+    var data = svg.selectAll(".personal").data();
+    svg.selectAll(".personal").remove();
+    var personal = svg.selectAll(".personal")
+       .data(data)
+       .enter().append("rect")
+       .attr("class", "personal")
+       .attr("transform", function(d) {return "translate(" + x(d[personalData].hour) + ",0)"; })
+       .attr("width", x.rangeBand())
+       .attr("y", function(d) {return y(d[personalData].y); })
+       .attr("height", function(d, i) { return y(0) - y(d[personalData].y); })
+       .style("fill", "black")
+       .style("fill-opacity", .5)
+       .style("stroke", "black")
+       .style("stroke-width", 1.5);
+}
+
+function reloadChart(data) {
+data.forEach(function(d) {
+    var y0 = 0;
+    d.activities = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+    d.activities.forEach(function(d) { d.y0 /= y0; d.y1 /= y0; });
+  });
+
+var hour = svg.selectAll(".hour").remove()
+
+var hour = svg.selectAll(".hour")
+      .data(data)
+    .enter().append("g")
+      .attr("class", "hour")
+      .attr("transform", function(d) { return "translate(" + x(d.hour) + ",0)"; });
+
+  hour.selectAll("rect")
+      .data(function(d) { return d.activities; })
+    .enter().append("rect")
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.y1); })
+      .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+      .style("fill", function(d) { return color(d.name); });
+  reloadPersonalData();
+  var legend = svg.selectAll(".legend").remove()
+  legend = svg.selectAll(".legend")
+          .data(color.domain().slice().reverse())
+          .enter().append("g")
+          .attr("class", "legend")
+          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+      .attr("x", width + legendWidth - 170)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color)
+      .on("click", function (d, i) {
+           activityOrder.splice(activityOrder.length - i-1, 1);
+           activityOrder.splice(0, 0, d);
+           color.domain(activityOrder);
+           reloadChart(data)
+           reloadPersonal()
+      });
+
+    legend.append("text")
+    .attr("x", width + legendWidth - 150)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .text(function(d) { return d; });
+
+   
+}    
+
+</script>
