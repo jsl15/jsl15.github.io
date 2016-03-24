@@ -84,9 +84,11 @@ var x = d3.scale.ordinal()
 var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
-var color = d3.scale.ordinal()
+/*var color = d3.scale.ordinal()
     .range(['#9e0142','#d53e4f','#f46d43','#fdae61','#fee08b','#FBF455','#ffffbf','#e6f598', '#abdda4','#66C26C','#66c2a5','#85CFF9','#3B71FF','#925DFF','#5A00C1','#9C119A','#EF8FE0', '#F7D7F1']);
+*/
 
+var color = d3.scale.category20();
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -186,6 +188,10 @@ d3.csv("personal.csv", function(error, data) {
  var fields= d3.keys(data[0]).filter(function(key) { return key !== "hour"; });
  d3.select("#chart").append("span").text("Personal Data to Display:")
  d3.select("#chart").append("select").attr("id", "selector");
+ d3.select("#chart").append("div")
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", "black");
  var selector = d3.select("#selector")
     .on("change", function () {
         var newData = d3.select(this).property('value');
